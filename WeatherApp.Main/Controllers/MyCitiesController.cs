@@ -1,10 +1,9 @@
 ﻿using System.Security.Claims;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
+using WeatherApp.Main.Data.Models;
 using WeatherApp.Main.Services.Interfaces;
 
 namespace WeatherApp.Main.Controllers;
@@ -33,25 +32,13 @@ public class MyCitiesController : Controller
         return View();
     }
 
-    // GET: MyCities/Create
-    public ActionResult Create()
-    {
-        return View();
-    }
-
     // POST: MyCities/Create
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Create(IFormCollection collection)
+    public async Task SelectCity([FromBody] City city)
     {
-        try
-        {
-            return RedirectToAction(nameof(Index));
-        }
-        catch
-        {
-            return View();
-        }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        await _userService.SelectCity(city.Name, userId);
+
     }
 
     // GET: MyCities/Edit/5

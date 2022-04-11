@@ -4,5 +4,5 @@ namespace WeatherApp.Main.Services.Interfaces;
 
 public interface IWeatherForecastAPIService
 {
-    Task<List<WeatherForecast>> GetWeatherForecasts(string cityName, string country);
+    Task<List<WeatherForecast>> GetWeatherForecasts(string cityName);
 }

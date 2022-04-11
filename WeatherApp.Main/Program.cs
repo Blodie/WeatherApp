@@ -18,12 +18,14 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
-builder.Services.AddHttpClient<ICurrentWeatherAPIService>(client => client.BaseAddress = new Uri($"https://https://api.weatherbit.io/v2.0/current?key={builder.Configuration["APIKey"]}"));
-builder.Services.AddHttpClient<IWeatherForecastAPIService>(client => client.BaseAddress = new Uri($"https://https://api.weatherbit.io/v2.0/daily?key={builder.Configuration["APIKey"]}"));
+
 builder.Services.AddScoped<IWeatherForecastAPIService, WeatherForecastAPIService>();
 builder.Services.AddScoped<ICurrentWeatherAPIService, CurrentWeatherAPIService>();
 builder.Services.AddScoped<IWeatherService, WeatherService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddHttpClient<ICurrentWeatherAPIService, CurrentWeatherAPIService>(client => client.BaseAddress = new Uri($"https://api.weatherbit.io/v2.0/current"));
+builder.Services.AddHttpClient<IWeatherForecastAPIService, WeatherForecastAPIService>(client => client.BaseAddress = new Uri($"https://api.weatherbit.io/v2.0/forecast/daily"));
 
 var app = builder.Build();
 

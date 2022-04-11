@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using System.Web;
 
 using WeatherApp.Main.Data.Models;
@@ -10,21 +9,24 @@ namespace WeatherApp.Main.Services.Implementations;
 public class WeatherForecastAPIService : IWeatherForecastAPIService
 {
     private readonly HttpClient _http;
+    private readonly IConfiguration _config;
 
-    public WeatherForecastAPIService(HttpClient http)
+    public WeatherForecastAPIService(HttpClient http, IConfiguration config)
     {
         _http = http;
+        _config = config;
     }
 
-    public async Task<List<WeatherForecast>> GetWeatherForecasts(string cityName, string country)
+    public async Task<List<WeatherForecast>> GetWeatherForecasts(string cityName)
     {
         try
         {
-            var request = await _http.GetAsync($"&city={HttpUtility.UrlEncode(cityName)},{HttpUtility.UrlEncode(country)}");
-            request.EnsureSuccessStatusCode();
-            var forecastData = await request.Content.ReadFromJsonAsync<WeatherForecastAPIModel>();
+            var requestUri = $"?city={HttpUtility.UrlEncode(cityName)}&key={_config["APIKey"]}";
+            var response = await _http.GetAsync(requestUri);
+            response.EnsureSuccessStatusCode();
+            var forecastData = await response.Content.ReadFromJsonAsync<WeatherForecastAPIModel>();
             if (forecastData?.Forecasts is null)
-                throw new WeatherForecastsNullException(cityName, country);
+                throw new WeatherForecastsNullException(cityName);
 
             return forecastData.Forecasts.Select(forecast => new WeatherForecast
             {
@@ -54,8 +56,8 @@ public class WeatherForecastAPIService : IWeatherForecastAPIService
 
     private class WeatherForecastsNullException : Exception
     {
-        public WeatherForecastsNullException(string cityName, string country) :
-            base($"Weather forecasts could not be found for city '{cityName}' in country '{country}'.")
+        public WeatherForecastsNullException(string cityName) :
+            base($"Weather forecasts could not be found for city '{cityName}'.")
         {
         }
     }
@@ -66,8 +68,6 @@ public class WeatherForecastAPIService : IWeatherForecastAPIService
         public List<Forecast> Forecasts { get; set; } = new();
         [JsonPropertyName("city_name")]
         public string CityName { get; set; } = string.Empty;
-        [JsonPropertyName("country_code")]
-        public string Country { get; set; } = string.Empty;
     }
 
     private class Forecast

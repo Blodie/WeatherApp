@@ -5,7 +5,7 @@ using WeatherApp.Main.Authorization;
 
 namespace WeatherApp.Main.Controllers;
 
-[Authorize(Constants.Administrator)]
+[Authorize(Roles = Constants.Administrator)]
 public class OthersCitiesController : Controller
 {
     // GET: OthersCitiesController

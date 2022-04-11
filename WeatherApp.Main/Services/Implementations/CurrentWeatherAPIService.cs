@@ -9,21 +9,24 @@ namespace WeatherApp.Main.Services.Implementations;
 public class CurrentWeatherAPIService : ICurrentWeatherAPIService
 {
     private readonly HttpClient _http;
+    private readonly IConfiguration _config;
 
-    public CurrentWeatherAPIService(HttpClient http)
+    public CurrentWeatherAPIService(HttpClient http, IConfiguration config)
     {
         _http = http;
+        _config = config;
     }
 
-    public async Task<CurrentWeather> GetCurrentWeather(string cityName, string country)
+    public async Task<CurrentWeather> GetCurrentWeather(string cityName)
     {
         try
         {
-            var request = await _http.GetAsync($"&city={HttpUtility.UrlEncode(cityName)},{HttpUtility.UrlEncode(country)}");
-            request.EnsureSuccessStatusCode();
-            var weatherData = await request.Content.ReadFromJsonAsync<CurrentWeatherAPIModel>();
+            var requestUri = $"?city={HttpUtility.UrlEncode(cityName)}&key={_config["APIKey"]}";
+            var response = await _http.GetAsync(requestUri);
+            response.EnsureSuccessStatusCode();
+            var weatherData = await response.Content.ReadFromJsonAsync<CurrentWeatherAPIModel>();
             if (weatherData?.CurrentWeathers?[0] is null)
-                throw new CurrentWeatherNullException(cityName, country);
+                throw new CurrentWeatherNullException(cityName);
 
             var currentWeather = weatherData.CurrentWeathers[0];
             return new()
@@ -52,8 +55,8 @@ public class CurrentWeatherAPIService : ICurrentWeatherAPIService
 
     private class CurrentWeatherNullException : Exception
     {
-        public CurrentWeatherNullException(string cityName, string country) :
-            base($"Current weather could not be found for city '{cityName}' in country '{country}'.")
+        public CurrentWeatherNullException(string cityName) :
+            base($"Current weather could not be found for city '{cityName}'.")
         {
         }
     }
@@ -66,8 +69,6 @@ public class CurrentWeatherAPIService : ICurrentWeatherAPIService
 
     private class Current
     {
-        [JsonPropertyName("country_code")]
-        public string Country { get; set; } = string.Empty;
         [JsonPropertyName("city_name")]
         public string CityName { get; set; } = string.Empty;
         [JsonPropertyName("weather")]

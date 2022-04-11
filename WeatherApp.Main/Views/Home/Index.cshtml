@@ -9,16 +9,16 @@
 
 <table class="table">
     <tr>
-        <th>Country</th>
         <th>City</th>
         <th>Temperature (C)</th>
+        <th>Description</th>
     </tr>
     @foreach (var weatherVM in Model)
     {
         <tr>
-            <td>weatherVM.Country</td>
-            <td>weatherVM.City</td>
-            <td>weatherVM.CurrentWeather.TempC</td>
+            <td>@weatherVM.CityName</td>
+            <td>@weatherVM.CurrentWeather.TempC</td>
+            <td>@weatherVM.CurrentWeather.Description</td>
         </tr>
     }
 </table>

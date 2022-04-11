@@ -8,6 +8,10 @@
 
 <h1>Current Weather and Forecasts</h1>
 <hr />
+<h3>Add City</h3>
+<input id="cityName" type="text" />
+<button type="button" class="btn btn-primary" onclick="addCity(event)">Add</button>
+<hr />
 
 <table class="table table-bordered table-hover">
     <thead class="thead-dark">
@@ -20,10 +24,10 @@
     <tbody>
         @foreach (var weatherVM in Model)
         {
-            <tr onclick="toggleForecasts()">
-                <td>weatherVM.Country</td>
-                <td>weatherVM.City</td>
-                <td>weatherVM.CurrentWeather.TempC</td>
+            <tr onclick="toggleForecasts(event)">
+                <td>@weatherVM.CityName</td>
+                <td>@weatherVM.CurrentWeather.TempC</td>
+                <td>@weatherVM.CurrentWeather.Description</td>
             </tr>
         }
     </tbody>
@@ -31,6 +35,20 @@
 
 <script>
     function toggleForecasts(event){
-        console.log(event.target)
+        console.log(event.target);
+    }
+
+    async function addCity(event){
+        const name = document.querySelector('#cityName').value;
+
+        await fetch('/mycities/selectcity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name})
+        });
+
+        window.location.reload();
     }
 </script>

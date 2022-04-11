@@ -12,12 +12,14 @@ public class UserService : IUserService
     private readonly ApplicationDbContext _context;
     private readonly IWeatherService _weatherService;
     private readonly int _currentWeatherUpdateFreqH;
+    private readonly List<string> _defaultCities;
 
     public UserService(ApplicationDbContext context, IConfiguration config, IWeatherService weatherService)
     {
         _context = context;
         _weatherService = weatherService;
         _currentWeatherUpdateFreqH = config.GetSection("CurrentWeatherUpdateFreqHours").Get<int>();
+        _defaultCities = config.GetSection("DefaultCities").Get<List<string>>();
     }
 
     public async Task<List<WeatherViewModel>> GetCitiesWeatherData(string? userId = null)
@@ -26,11 +28,11 @@ public class UserService : IUserService
             return await GetDefaultCitiesWeatherList();
 
         var userSelectedCities = await _context.UserSelectedCities
+            .Where(userSelectedCity => userSelectedCity.ApplicationUserId == userId)
             .Include(userSelectedCity => userSelectedCity.City)
                 .ThenInclude(city => city.CurrentWeather)
             .Include(userSelectedCity => userSelectedCity.City)
                 .ThenInclude(city => city.Forecasts)
-            .Where(userSelectedCity => userSelectedCity.ApplicationUserId == userId)
             .ToListAsync();
 
         var weatherViewModels = new List<WeatherViewModel>();
@@ -42,9 +44,8 @@ public class UserService : IUserService
 
             weatherViewModels.Add(new()
             {
-                CityId = userSelectedCity.CityId,
+                CityId = userSelectedCity.CityId.Value,
                 IsFavorite = userSelectedCity.IsFavorite,
-                Country = userSelectedCity.City.Country,
                 CityName = userSelectedCity.City.Name,
                 CurrentWeather = userSelectedCity.City.CurrentWeather,
                 WeatherForecasts = userSelectedCity.City.Forecasts.ToList()
@@ -54,15 +55,14 @@ public class UserService : IUserService
         return weatherViewModels;
     }
 
-    public async Task SelectCity(string cityName, string country, string userId)
+    public async Task SelectCity(string cityName, string userId)
     {
         if (userId is null)
             throw new ArgumentNullException(nameof(userId));
 
         cityName = cityName?.Trim().Normalize();
-        country = country?.Trim().Normalize();
 
-        var city = await GetCity(cityName, country);
+        var city = await GetCity(cityName);
 
         _context.UserSelectedCities.Add(
             new()
@@ -100,23 +100,40 @@ public class UserService : IUserService
 
     private async Task<List<WeatherViewModel>> GetDefaultCitiesWeatherList()
     {
-        //TODO
-        return new();
+        var weatherViewModels = new List<WeatherViewModel>();
+        foreach (var cityName in _defaultCities)
+        {
+            var city = await GetCity(cityName);
+            weatherViewModels.Add(new()
+            {
+                CityId = city.Id,
+                CityName = city.Name,
+                CurrentWeather = city.CurrentWeather,
+                WeatherForecasts = city.Forecasts.ToList()
+            });
+        }
+        return weatherViewModels;
     }
 
-    private async Task<City> GetCity(string cityName, string country)
+    private async Task<City> GetCity(string cityName)
     {
-        var city = await _context.Cities.FirstOrDefaultAsync(city => city.Name == cityName && city.Country == country);
+        var city = await _context.Cities
+            .Include(city => city.CurrentWeather)
+            .Include(city => city.Forecasts)
+            .FirstOrDefaultAsync(city => city.Name == cityName);
+
         if (city is null)
         {
             city = new()
             {
                 Name = cityName,
-                Country = country
             };
             _context.Cities.Add(city);
             await _context.SaveChangesAsync();
+            city.CurrentWeather = await _weatherService.GetUpdatedCurrentWeather(city);
+            city.Forecasts = await _weatherService.GetUpdatedWeatherForecasts(city);
         }
+
         return city;
     }
 
