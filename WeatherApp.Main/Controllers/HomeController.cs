@@ -2,21 +2,25 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-using WeatherApp.Main.Models;
+using WeatherApp.Main.Services.Interfaces;
+using WeatherApp.Main.ViewModels;
 
 namespace WeatherApp.Main.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IUserService _userService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IUserService userService)
     {
         _logger = logger;
+        _userService = userService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var defaultCitiesWeatherData = await _userService.GetCitiesWeatherData();
+        return View(defaultCitiesWeatherData);
     }
 
     public IActionResult Privacy()

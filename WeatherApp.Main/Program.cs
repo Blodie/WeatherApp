@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 using WeatherApp.Main.Data;
+using WeatherApp.Main.Data.Models;
+using WeatherApp.Main.Services.Implementations;
+using WeatherApp.Main.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +14,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient<ICurrentWeatherAPIService>(client => client.BaseAddress = new Uri($"https://https://api.weatherbit.io/v2.0/current?key={builder.Configuration["APIKey"]}"));
+builder.Services.AddHttpClient<IWeatherForecastAPIService>(client => client.BaseAddress = new Uri($"https://https://api.weatherbit.io/v2.0/daily?key={builder.Configuration["APIKey"]}"));
+builder.Services.AddScoped<IWeatherForecastAPIService, WeatherForecastAPIService>();
+builder.Services.AddScoped<ICurrentWeatherAPIService, CurrentWeatherAPIService>();
+builder.Services.AddScoped<IWeatherService, WeatherService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 

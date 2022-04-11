@@ -1,0 +1,36 @@
+﻿@model List<WeatherViewModel>
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<h1>Current Weather and Forecasts</h1>
+<hr />
+
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Country</th>
+            <th>City</th>
+            <th>Temperature (C)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var weatherVM in Model)
+        {
+            <tr onclick="toggleForecasts()">
+                <td>weatherVM.Country</td>
+                <td>weatherVM.City</td>
+                <td>weatherVM.CurrentWeather.TempC</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function toggleForecasts(event){
+        console.log(event.target)
+    }
+</script>
