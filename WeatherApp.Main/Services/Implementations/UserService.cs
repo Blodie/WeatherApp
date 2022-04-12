@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 using WeatherApp.Main.Data;
 using WeatherApp.Main.Data.Models;
@@ -33,6 +34,7 @@ public class UserService : IUserService
                 .ThenInclude(city => city.CurrentWeather)
             .Include(userSelectedCity => userSelectedCity.City)
                 .ThenInclude(city => city.Forecasts)
+            .AsNoTracking()
             .ToListAsync();
 
         var weatherViewModels = new List<WeatherViewModel>();
@@ -98,6 +100,15 @@ public class UserService : IUserService
         await _context.SaveChangesAsync();
     }
 
+    public async Task<List<ApplicationUser>> GetUserSelectedCities()
+    {
+        return await _context.Users
+            .Include(userSelectedCity => userSelectedCity.UserSelectedCities)
+            .ThenInclude(userSelectedCity => userSelectedCity.City)
+            .Where(user => user.Email != null && user.UserSelectedCities.Count > 0)
+            .ToListAsync();
+    }
+
     private async Task<List<WeatherViewModel>> GetDefaultCitiesWeatherList()
     {
         var weatherViewModels = new List<WeatherViewModel>();
@@ -120,6 +131,7 @@ public class UserService : IUserService
         var city = await _context.Cities
             .Include(city => city.CurrentWeather)
             .Include(city => city.Forecasts)
+            .AsNoTracking()
             .FirstOrDefaultAsync(city => city.Name == cityName);
 
         if (city is null)

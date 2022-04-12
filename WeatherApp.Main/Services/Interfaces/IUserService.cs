@@ -1,4 +1,5 @@
-﻿using WeatherApp.Main.ViewModels;
+﻿using WeatherApp.Main.Data.Models;
+using WeatherApp.Main.ViewModels;
 
 namespace WeatherApp.Main.Services.Interfaces;
 
@@ -8,4 +9,5 @@ public interface IUserService
     Task<List<WeatherViewModel>> GetCitiesWeatherData(string? userId = null);
     Task SelectCity(string cityName, string userId);
     Task ToggleFavorite(int cityId, string userId);
+    Task<List<ApplicationUser>> GetUserSelectedCities();
 }

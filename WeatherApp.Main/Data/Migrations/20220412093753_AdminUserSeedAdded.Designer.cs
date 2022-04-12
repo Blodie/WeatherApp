@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeatherApp.Main.Data;
 
@@ -11,9 +12,10 @@ using WeatherApp.Main.Data;
 namespace WeatherApp.Main.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220412093753_AdminUserSeedAdded")]
+    partial class AdminUserSeedAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,8 +53,8 @@ namespace WeatherApp.Main.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c9667285-bdf7-471c-9dcc-5d916a957596",
-                            ConcurrencyStamp = "7d242e6d-fa56-4987-9f9b-26569d6b3105",
+                            Id = "357a6898-c94f-4ee7-b66d-d4689b82e88f",
+                            ConcurrencyStamp = "486f338a-802e-48e7-8bfe-fe7c27864fe4",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -149,8 +151,8 @@ namespace WeatherApp.Main.Data.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "c9667285-bdf7-471c-9dcc-5d916a957596",
-                            RoleId = "c9667285-bdf7-471c-9dcc-5d916a957596"
+                            UserId = "357a6898-c94f-4ee7-b66d-d4689b82e88f",
+                            RoleId = "357a6898-c94f-4ee7-b66d-d4689b82e88f"
                         });
                 });
 
@@ -242,19 +244,19 @@ namespace WeatherApp.Main.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c9667285-bdf7-471c-9dcc-5d916a957596",
+                            Id = "357a6898-c94f-4ee7-b66d-d4689b82e88f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8ec72147-6074-4fb6-b6db-23cfa013959a",
+                            ConcurrencyStamp = "b8e202cb-5e15-4709-a25e-7be2deabc4a8",
                             Email = "admin@admin.admin",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.ADMIN",
-                            NormalizedUserName = "ADMIN@ADMIN.ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAENykC2EbAxAtUMVu9u7U1ykA+wUqHz46ZW7qAOnYb8rd+GDu5eB05gfuEz9DPI/wsw==",
+                            NormalizedUserName = "admin",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPIhB2IvNvfFf0xLxPdnL4mAd0MBAhtDOocEm7JgW8rvAp2tL9b4airdPqW4wzmwfA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
-                            UserName = "admin@admin.admin"
+                            UserName = "admin"
                         });
                 });
 

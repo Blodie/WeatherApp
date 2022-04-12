@@ -25,9 +25,6 @@ public class WeatherService : IWeatherService
         currentWeather.Id = outdatedCurrentWeather?.Id ?? 0;
         _context.CurrentWeathers.Update(currentWeather);
         await _context.SaveChangesAsync();
-        city.CurrentWeatherId = currentWeather.Id;
-        _context.Cities.Update(city);
-        await _context.SaveChangesAsync();
         return currentWeather;
     }
 

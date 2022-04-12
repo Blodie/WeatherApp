@@ -2,84 +2,32 @@
 using Microsoft.AspNetCore.Mvc;
 
 using WeatherApp.Main.Authorization;
+using WeatherApp.Main.Data.Models;
+using WeatherApp.Main.Services.Interfaces;
 
 namespace WeatherApp.Main.Controllers;
 
 [Authorize(Roles = Constants.Administrator)]
 public class OthersCitiesController : Controller
 {
+    private readonly IUserService _userService;
+
+    public OthersCitiesController(IUserService userService)
+    {
+        _userService = userService;
+    }
+
     // GET: OthersCitiesController
-    public ActionResult Index()
+    public async Task<ActionResult> Index()
     {
-        return View();
+        var users = await _userService.GetUserSelectedCities();
+        return View(users);
     }
 
-    // GET: OthersCitiesController/Details/5
-    public ActionResult Details(int id)
-    {
-        return View();
-    }
-
-    // GET: OthersCitiesController/Create
-    public ActionResult Create()
-    {
-        return View();
-    }
-
-    // POST: OthersCitiesController/Create
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Create(IFormCollection collection)
+    public async Task DeselectCityForUser([FromBody] UserSelectedCity userSelectedCity)
     {
-        try
-        {
-            return RedirectToAction(nameof(Index));
-        }
-        catch
-        {
-            return View();
-        }
+        await _userService.DeselectCity(userSelectedCity.CityId.Value, userSelectedCity.ApplicationUserId);
     }
 
-    // GET: OthersCitiesController/Edit/5
-    public ActionResult Edit(int id)
-    {
-        return View();
-    }
-
-    // POST: OthersCitiesController/Edit/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Edit(int id, IFormCollection collection)
-    {
-        try
-        {
-            return RedirectToAction(nameof(Index));
-        }
-        catch
-        {
-            return View();
-        }
-    }
-
-    // GET: OthersCitiesController/Delete/5
-    public ActionResult Delete(int id)
-    {
-        return View();
-    }
-
-    // POST: OthersCitiesController/Delete/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Delete(int id, IFormCollection collection)
-    {
-        try
-        {
-            return RedirectToAction(nameof(Index));
-        }
-        catch
-        {
-            return View();
-        }
-    }
 }

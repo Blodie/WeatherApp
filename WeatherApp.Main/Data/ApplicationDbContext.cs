@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
+using WeatherApp.Main.Authorization;
 using WeatherApp.Main.Data.Models;
 
 namespace WeatherApp.Main.Data;
@@ -19,9 +22,37 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        builder.Entity<City>()
-            .HasOne(city => city.CurrentWeather)
-            .WithOne(weather => weather.City)
-            .HasForeignKey<CurrentWeather>(weather => weather.CityId);
+        SeedAdminUser(builder);
+    }
+
+    private static void SeedAdminUser(ModelBuilder builder)
+    {
+        var ADMIN_ID = Guid.NewGuid().ToString();
+        var ROLE_ID = ADMIN_ID;
+        builder.Entity<IdentityRole>().HasData(new IdentityRole
+        {
+            Id = ROLE_ID,
+            Name = Constants.Administrator,
+            NormalizedName = Constants.Administrator.ToUpper()
+        });
+
+        var hasher = new PasswordHasher<ApplicationUser>();
+        builder.Entity<ApplicationUser>().HasData(new ApplicationUser
+        {
+            Id = ADMIN_ID,
+            UserName = "admin@admin.admin",
+            NormalizedUserName = "ADMIN@ADMIN.ADMIN",
+            Email = "admin@admin.admin",
+            NormalizedEmail = "ADMIN@ADMIN.ADMIN",
+            EmailConfirmed = true,
+            PasswordHash = hasher.HashPassword(null, "admin@admin.admin"),
+            SecurityStamp = string.Empty
+        });
+
+        builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
+        {
+            RoleId = ROLE_ID,
+            UserId = ADMIN_ID
+        });
     }
 }

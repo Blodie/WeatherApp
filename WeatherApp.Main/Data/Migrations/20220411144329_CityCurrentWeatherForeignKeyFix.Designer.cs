@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeatherApp.Main.Data;
 
@@ -11,9 +12,10 @@ using WeatherApp.Main.Data;
 namespace WeatherApp.Main.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220411144329_CityCurrentWeatherForeignKeyFix")]
+    partial class CityCurrentWeatherForeignKeyFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,15 +49,6 @@ namespace WeatherApp.Main.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "c9667285-bdf7-471c-9dcc-5d916a957596",
-                            ConcurrencyStamp = "7d242e6d-fa56-4987-9f9b-26569d6b3105",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -145,13 +138,6 @@ namespace WeatherApp.Main.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "c9667285-bdf7-471c-9dcc-5d916a957596",
-                            RoleId = "c9667285-bdf7-471c-9dcc-5d916a957596"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -238,24 +224,6 @@ namespace WeatherApp.Main.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "c9667285-bdf7-471c-9dcc-5d916a957596",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "8ec72147-6074-4fb6-b6db-23cfa013959a",
-                            Email = "admin@admin.admin",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@ADMIN.ADMIN",
-                            NormalizedUserName = "ADMIN@ADMIN.ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAENykC2EbAxAtUMVu9u7U1ykA+wUqHz46ZW7qAOnYb8rd+GDu5eB05gfuEz9DPI/wsw==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@admin.admin"
-                        });
                 });
 
             modelBuilder.Entity("WeatherApp.Main.Data.Models.City", b =>

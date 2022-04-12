@@ -9,7 +9,6 @@ public class City
     [MaxLength(128)]
     public string Name { get; set; } = string.Empty;
 
-    public int? CurrentWeatherId { get; set; }
     public CurrentWeather? CurrentWeather { get; set; }
 
     public ICollection<WeatherForecast> Forecasts { get; set; } = new List<WeatherForecast>();

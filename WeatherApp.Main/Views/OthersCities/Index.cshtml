@@ -1,0 +1,95 @@
+﻿@using WeatherApp.Main.Data.Models
+@using WeatherApp.Main.Controllers
+
+@model List<ApplicationUser>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>User Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr id="user-row-@user.Id" class="user-row" onclick="toggleUserSelectedCities(event, '@user.Id')">
+                <td>@user.Email</td>
+                <td>@user.UserName</td>
+            </tr>
+            <tr id="selected-city-list-@user.Id" class="selected-city-list">
+                <td colspan="4">
+                    <div>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>City Name</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var userSelectedCity in user.UserSelectedCities)
+                                {
+                                    <tr id="selected-city-@userSelectedCity.CityId" class="selected-city">
+                                        <td>@userSelectedCity.City.Name</td>
+                                        <td><button type="button" class="btn btn-danger" onclick="deselectCityForUser(event, '@userSelectedCity.ApplicationUserId', @userSelectedCity.CityId)">Delete</button></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function toggleUserSelectedCities(event, userId) {
+        const selectedCitiesElement = document.querySelector(`#selected-city-list-${userId}`);
+        if (selectedCitiesElement.classList.contains('opened')) {
+            selectedCitiesElement.classList.remove('opened');
+        } else {
+            selectedCitiesElement.classList.add('opened');
+        }
+    }
+
+    async function deselectCityForUser(event, applicationUserId, cityId) {
+        event.target.disabled = true;
+        await fetch('@Url.Action(nameof(OthersCitiesController.DeselectCityForUser))', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({applicationUserId, cityId})
+        });
+        document.querySelector(`#selected-city-${cityId}`).remove();
+
+        const selectedCityList = document.querySelector(`#selected-city-list-${applicationUserId}`);
+        if (!selectedCityList.querySelector('tr.selected-city')) {
+            document.querySelector(`#user-row-${applicationUserId}`).remove();
+            selectedCityList.remove();
+        }
+    }
+
+</script>
+
+<style>
+    tr.selected-city-list td div {
+      max-height: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+      transition: max-height 0.3s;
+    }
+    tr.selected-city-list.opened td div {
+      max-height: 1000px;
+      transition: max-height 0.6s;
+    }
+    tr.selected-city-list td[colspan]{
+        padding: 0px;
+    }
+    tr.user-row:hover {
+        background-color: #e9ecef;
+        cursor: pointer;
+    }
+</style>
