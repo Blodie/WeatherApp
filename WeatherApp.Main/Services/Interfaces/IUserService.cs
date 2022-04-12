@@ -9,5 +9,5 @@ public interface IUserService
     Task<List<WeatherViewModel>> GetCitiesWeatherData(string? userId = null);
     Task SelectCity(string cityName, string userId);
     Task ToggleFavorite(int cityId, string userId);
-    Task<List<ApplicationUser>> GetUserSelectedCities();
+    Task<List<ApplicationUser>> GetUsers();
 }

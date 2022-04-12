@@ -1,4 +1,6 @@
-﻿using WeatherApp.Main.Data;
+﻿using Microsoft.EntityFrameworkCore;
+
+using WeatherApp.Main.Data;
 using WeatherApp.Main.Data.Models;
 using WeatherApp.Main.Services.Interfaces;
 
@@ -37,5 +39,14 @@ public class WeatherService : IWeatherService
         _context.AddRange(weatherForecasts);
         await _context.SaveChangesAsync();
         return weatherForecasts;
+    }
+
+    public async Task UpdateAllForecasts()
+    {
+        var cities = await _context.Cities.Include(city => city.Forecasts).ToListAsync();
+        foreach (var city in cities)
+        {
+            await GetUpdatedWeatherForecasts(city);
+        }
     }
 }

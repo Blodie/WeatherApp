@@ -17,10 +17,9 @@ public class OthersCitiesController : Controller
         _userService = userService;
     }
 
-    // GET: OthersCitiesController
     public async Task<ActionResult> Index()
     {
-        var users = await _userService.GetUserSelectedCities();
+        var users = await _userService.GetUsers();
         return View(users);
     }
 

@@ -13,11 +13,11 @@
     <tbody>
         @foreach (var user in Model)
         {
-            <tr id="user-row-@user.Id" class="user-row" onclick="toggleUserSelectedCities(event, '@user.Id')">
+            <tr id="user-row-@user.Id" class="user-row hoverable" onclick="toggleUserSelectedCities(event, '@user.Id')">
                 <td>@user.Email</td>
                 <td>@user.UserName</td>
             </tr>
-            <tr id="selected-city-list-@user.Id" class="selected-city-list">
+            <tr id="selected-city-list-@user.Id" class="selected-city-list collapsable">
                 <td colspan="4">
                     <div>
                         <table class="table table-sm">
@@ -73,23 +73,3 @@
     }
 
 </script>
-
-<style>
-    tr.selected-city-list td div {
-      max-height: 0;
-      box-sizing: border-box;
-      overflow: hidden;
-      transition: max-height 0.3s;
-    }
-    tr.selected-city-list.opened td div {
-      max-height: 1000px;
-      transition: max-height 0.6s;
-    }
-    tr.selected-city-list td[colspan]{
-        padding: 0px;
-    }
-    tr.user-row:hover {
-        background-color: #e9ecef;
-        cursor: pointer;
-    }
-</style>

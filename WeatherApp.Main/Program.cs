@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 using WeatherApp.Main.Data;
 using WeatherApp.Main.Data.Models;
+using WeatherApp.Main.Services.BackgroundServices;
 using WeatherApp.Main.Services.Implementations;
 using WeatherApp.Main.Services.Interfaces;
 
@@ -14,9 +15,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services
+    .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IWeatherForecastAPIService, WeatherForecastAPIService>();
@@ -26,6 +29,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddHttpClient<ICurrentWeatherAPIService, CurrentWeatherAPIService>(client => client.BaseAddress = new Uri($"https://api.weatherbit.io/v2.0/current"));
 builder.Services.AddHttpClient<IWeatherForecastAPIService, WeatherForecastAPIService>(client => client.BaseAddress = new Uri($"https://api.weatherbit.io/v2.0/forecast/daily"));
+
+builder.Services.AddHostedService<ForecastUpdaterService>();
 
 var app = builder.Build();
 

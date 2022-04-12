@@ -15,7 +15,7 @@
         <tr>
             <th>Favorite</th>
             <th>City</th>
-            <th>Temperature (C)</th>
+            <th>Current Temperature (C)</th>
             <th>Description</th>
             <th></th>
         </tr>
@@ -23,14 +23,14 @@
     <tbody id=main-body>
         @foreach (var weatherVM in Model.OrderByDescending(weatherVM => weatherVM.IsFavorite))
         {
-            <tr id="current-@weatherVM.CityId" onclick="toggleForecasts(event, @weatherVM.CityId)" class="current-weather">
+            <tr id="current-@weatherVM.CityId" onclick="toggleForecasts(event, @weatherVM.CityId)" class="current-weather hoverable">
                 <td><input class="form-check-input" type="checkbox" checked="@weatherVM.IsFavorite" onclick="event.stopPropagation()" onchange="toggleFavorite(event, @weatherVM.CityId)"></td>
                 <td>@weatherVM.CityName</td>
                 <td>@weatherVM.CurrentWeather.TempC</td>
                 <td>@weatherVM.CurrentWeather.Description</td>
                 <td><button type="button" class="btn btn-sm btn-danger float-end" onclick="deselectCity(event, @weatherVM.CityId)">Delete</button></td>
             </tr>
-            <tr id="forecast-@weatherVM.CityId" class="forecast">
+            <tr id="forecast-@weatherVM.CityId" class="forecast collapsable">
                 <td colspan="4">
                     <div>
                         <table class="table table-sm">
@@ -118,23 +118,3 @@
         window.location.reload();
     }
 </script>
-
-<style>
-    tr.forecast td div {
-      max-height: 0;
-      box-sizing: border-box;
-      overflow: hidden;
-      transition: max-height 0.3s;
-    }
-    tr.forecast.opened td div {
-      max-height: 1000px;
-      transition: max-height 0.6s;
-    }
-    tr.forecast td[colspan]{
-        padding: 0px;
-    }
-    tr.current-weather:hover {
-        background-color: #e9ecef;
-        cursor: pointer;
-    }
-</style>

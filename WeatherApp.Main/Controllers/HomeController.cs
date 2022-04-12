@@ -8,12 +8,10 @@ using WeatherApp.Main.ViewModels;
 namespace WeatherApp.Main.Controllers;
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
     private readonly IUserService _userService;
 
-    public HomeController(ILogger<HomeController> logger, IUserService userService)
+    public HomeController(IUserService userService)
     {
-        _logger = logger;
         _userService = userService;
     }
 

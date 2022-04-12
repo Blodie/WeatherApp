@@ -27,7 +27,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     private static void SeedAdminUser(ModelBuilder builder)
     {
-        var ADMIN_ID = Guid.NewGuid().ToString();
+        var ADMIN_ID = "c9667285-bdf7-471c-9dcc-5d916a957596";
         var ROLE_ID = ADMIN_ID;
         builder.Entity<IdentityRole>().HasData(new IdentityRole
         {

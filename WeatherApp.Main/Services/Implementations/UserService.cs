@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 using WeatherApp.Main.Data;
 using WeatherApp.Main.Data.Models;
@@ -44,14 +43,7 @@ public class UserService : IUserService
             if (userSelectedCity.City.CurrentWeather.LastUpdated.AddHours(_currentWeatherUpdateFreqH) < DateTime.UtcNow)
                 userSelectedCity.City.CurrentWeather = await _weatherService.GetUpdatedCurrentWeather(userSelectedCity.City);
 
-            weatherViewModels.Add(new()
-            {
-                CityId = userSelectedCity.CityId.Value,
-                IsFavorite = userSelectedCity.IsFavorite,
-                CityName = userSelectedCity.City.Name,
-                CurrentWeather = userSelectedCity.City.CurrentWeather,
-                WeatherForecasts = userSelectedCity.City.Forecasts.ToList()
-            });
+            weatherViewModels.Add(ConvertCityToWeatherViewModel(userSelectedCity.City, userSelectedCity.IsFavorite));
         }
 
         return weatherViewModels;
@@ -100,7 +92,7 @@ public class UserService : IUserService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<ApplicationUser>> GetUserSelectedCities()
+    public async Task<List<ApplicationUser>> GetUsers()
     {
         return await _context.Users
             .Include(userSelectedCity => userSelectedCity.UserSelectedCities)
@@ -115,15 +107,21 @@ public class UserService : IUserService
         foreach (var cityName in _defaultCities)
         {
             var city = await GetCity(cityName);
-            weatherViewModels.Add(new()
-            {
-                CityId = city.Id,
-                CityName = city.Name,
-                CurrentWeather = city.CurrentWeather,
-                WeatherForecasts = city.Forecasts.ToList()
-            });
+            weatherViewModels.Add(ConvertCityToWeatherViewModel(city));
         }
         return weatherViewModels;
+    }
+
+    private static WeatherViewModel ConvertCityToWeatherViewModel(City city, bool isFavorite = false)
+    {
+        return new()
+        {
+            CityId = city.Id,
+            IsFavorite = isFavorite,
+            CityName = city.Name,
+            CurrentWeather = city.CurrentWeather,
+            WeatherForecasts = city.Forecasts.Where(forecast => forecast.ValidDate > DateTime.Today).ToList()
+        };
     }
 
     private async Task<City> GetCity(string cityName)

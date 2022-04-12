@@ -273,7 +273,7 @@ namespace WeatherApp.Main.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cities");
+                    b.ToTable("Cities", (string)null);
                 });
 
             modelBuilder.Entity("WeatherApp.Main.Data.Models.CurrentWeather", b =>
@@ -303,7 +303,7 @@ namespace WeatherApp.Main.Data.Migrations
                     b.HasIndex("CityId")
                         .IsUnique();
 
-                    b.ToTable("CurrentWeathers");
+                    b.ToTable("CurrentWeathers", (string)null);
                 });
 
             modelBuilder.Entity("WeatherApp.Main.Data.Models.UserSelectedCity", b =>
@@ -329,7 +329,7 @@ namespace WeatherApp.Main.Data.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.ToTable("UserSelectedCities");
+                    b.ToTable("UserSelectedCities", (string)null);
                 });
 
             modelBuilder.Entity("WeatherApp.Main.Data.Models.WeatherForecast", b =>
@@ -364,7 +364,7 @@ namespace WeatherApp.Main.Data.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.ToTable("WeatherForecasts");
+                    b.ToTable("WeatherForecasts", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

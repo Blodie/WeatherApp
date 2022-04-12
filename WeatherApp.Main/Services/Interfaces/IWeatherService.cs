@@ -6,4 +6,5 @@ public interface IWeatherService
 {
     Task<CurrentWeather> GetUpdatedCurrentWeather(City city);
     Task<List<WeatherForecast>> GetUpdatedWeatherForecasts(City city);
+    Task UpdateAllForecasts();
 }
